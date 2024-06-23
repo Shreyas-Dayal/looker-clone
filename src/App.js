@@ -16,6 +16,7 @@ import ResizableNodeSelected from './ResizableNodeSelected';
 import TextFieldNode from './TextFieldNode';
 import DataInputNode from './DataInputNode';
 import VisualizationNode from './VisualizationNode';
+import Toolbar from './Toolbar';  // Import the Toolbar component
 
 const initialElements = [
   { id: '1', type: 'ResizableNodeSelected', data: { label: 'Start Node' }, position: { x: 250, y: 5 } },
@@ -123,26 +124,28 @@ const FlowChart = ({ nodes, setNodes, edges, setEdges, selectedNodes, setSelecte
   const handleMouseUp = () => {
     if (!selectionBox) return;
 
-    const selectedNodeIds = nodes.filter((node) => {
-      const nodeBounds = {
-        x: node.position.x,
-        y: node.position.y,
-        width: node.width || 150,
-        height: node.height || 100,
-      };
-      const box = {
-        x: Math.min(selectionBox.x, selectionBox.x + selectionBox.width),
-        y: Math.min(selectionBox.y, selectionBox.y + selectionBox.height),
-        width: Math.abs(selectionBox.width),
-        height: Math.abs(selectionBox.height),
-      };
-      return (
-        nodeBounds.x < box.x + box.width &&
-        nodeBounds.x + nodeBounds.width > box.x &&
-        nodeBounds.y < box.y + box.height &&
-        nodeBounds.y + nodeBounds.height > box.y
-      );
-    }).map((node) => node.id);
+    const selectedNodeIds = nodes
+      .filter((node) => {
+        const nodeBounds = {
+          x: node.position.x,
+          y: node.position.y,
+          width: node.width || 150,
+          height: node.height || 100,
+        };
+        const box = {
+          x: Math.min(selectionBox.x, selectionBox.x + selectionBox.width),
+          y: Math.min(selectionBox.y, selectionBox.y + selectionBox.height),
+          width: Math.abs(selectionBox.width),
+          height: Math.abs(selectionBox.height),
+        };
+        return (
+          nodeBounds.x < box.x + box.width &&
+          nodeBounds.x + nodeBounds.width > box.x &&
+          nodeBounds.y < box.y + box.height &&
+          nodeBounds.y + nodeBounds.height > box.y
+        );
+      })
+      .map((node) => node.id);
 
     setSelectedNodes(selectedNodeIds);
     setSelectionBox(null);
@@ -192,39 +195,6 @@ const FlowChart = ({ nodes, setNodes, edges, setEdges, selectedNodes, setSelecte
   );
 };
 
-const Toolbar = () => {
-  const nodeTypes = [
-    { type: 'ResizableNodeSelected', label: 'Resizable Node' },
-    { type: 'TextFieldNode', label: 'Text Field Node' },
-    { type: 'DataInputNode', label: 'Data Input Node' },
-    { type: 'VisualizationNode', label: 'Visualization Node' },
-  ];
-
-  return (
-    <div className="toolbar">
-      {nodeTypes.map((node) => (
-        <ToolbarItem key={node.type} nodeType={node.type} label={node.label} />
-      ))}
-    </div>
-  );
-};
-
-const ToolbarItem = ({ nodeType, label }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'node',
-    item: { nodeType },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
-
-  return (
-    <div ref={drag} className="toolbar-item">
-      {label}
-    </div>
-  );
-};
-
 function App() {
   const [nodes, setNodes] = useState(initialElements.filter((el) => !el.source && !el.target));
   const [edges, setEdges] = useState(initialElements.filter((el) => el.source && el.target));
@@ -258,13 +228,6 @@ function App() {
     localStorage.removeItem('edges');
   };
 
-  const deleteSelectedNodes = () => {
-    console.log('Selected Nodes:', selectedNodes);
-    setNodes((nds) => nds.filter((node) => !selectedNodes.includes(node.id)));
-    setEdges((eds) => eds.filter((edge) => !selectedNodes.includes(edge.source) && !selectedNodes.includes(edge.target)));
-    setSelectedNodes([]);
-  };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="App">
@@ -284,9 +247,6 @@ function App() {
           <button onClick={saveDiagram}>Save Diagram</button>
           <button onClick={loadDiagram}>Load Diagram</button>
           <button onClick={clearDiagram}>Clear Diagram</button>
-          <button onClick={deleteSelectedNodes} disabled={selectedNodes.length === 0}>
-            Delete Selected Nodes
-          </button>
         </div>
       </div>
     </DndProvider>
