@@ -3,13 +3,35 @@ import { Handle, Position, NodeResizer, useReactFlow } from 'reactflow';
 
 const ResizableNodeSelected = memo(({ id, selected, data }) => {
   const { setNodes } = useReactFlow();
+  const { setSelectedNodes } = data; // Extract setSelectedNodes from data
 
-  const handleDelete = () => {
+  const handleDelete = (event) => {
+    event.stopPropagation();
     setNodes((nds) => nds.filter((node) => node.id !== id));
+  };
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    if (typeof setSelectedNodes === 'function') {
+      setSelectedNodes((prevSelected) => {
+        if (event.ctrlKey || event.metaKey) { // Handle Ctrl/Cmd key for multi-selection
+          if (prevSelected.includes(id)) {
+            return prevSelected.filter((nodeId) => nodeId !== id);
+          } else {
+            return [...prevSelected, id];
+          }
+        } else {
+          return [id];
+        }
+      });
+    } else {
+      console.error('setSelectedNodes is not a function');
+    }
   };
 
   return (
     <div
+      onClick={handleClick}
       style={{
         border: selected ? '2px solid blue' : '2px solid black',
         borderRadius: '5px',
