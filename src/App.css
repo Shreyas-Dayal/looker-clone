@@ -46,3 +46,12 @@
 .controls button:hover {
   background-color: #0056b3;
 }
+
+.toolbar-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}

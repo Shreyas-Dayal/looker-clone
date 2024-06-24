@@ -52,7 +52,7 @@ function App() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="App">
-        <h1>React Flow Diagram</h1>
+        <h1>React Flow Renderer</h1>
         <div className="main-layout">
           <div className="canvas-section">
             <FlowChart

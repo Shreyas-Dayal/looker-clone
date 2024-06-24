@@ -10,6 +10,13 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
+
+    "chart.js": "^4.4.3",
+    "papaparse": "^5.4.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-resizable": "^3.0.5",
+    
     "react-scripts": "5.0.1",
     "reactflow": "^11.11.4",
     "web-vitals": "^2.1.4"
